@@ -45,25 +45,27 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-//#define USE_BASE      // Enable the base controller code
-#undef USE_BASE     // Disable the base controller code
+#define USE_BASE      // Enable the base controller code
+//#undef USE_BASE     // Disable the base controller code
 
 /* Define the motor controller and encoder library you are using */
 #ifdef USE_BASE
    /* The Pololu VNH5019 dual motor driver shield */
-   #define POLOLU_VNH5019
+   //#define POLOLU_VNH5019
 
    /* The Pololu MC33926 dual motor driver shield */
    //#define POLOLU_MC33926
 
    /* The RoboGaia encoder shield */
-   #define ROBOGAIA
+   //#define ROBOGAIA
 
    /* L298N Dual H-Bridge Motor Controller */
    #define L298N_DUAL_HBRIDGE
    
    /* Encoders directly attached to Arduino board */
    //#define ARDUINO_ENC_COUNTER
+  /* My customized encoders */
+   #define ARDUINO_MY_COUNTER
 #endif
 
 #define USE_SERVOS  // Enable use of PWM servos as defined in servos.h
@@ -333,7 +335,7 @@ void loop() {
   }
 
   // Check to see if we have exceeded the auto-stop interval
-  if ((millis() - lastMotorCommand) > AUTO_STOP_INTERVAL) {;
+  if ((millis() - lastMotorCommand) > AUTO_STOP_INTERVAL) {
     setMotorSpeeds(0, 0);
     moving = 0;
   }
