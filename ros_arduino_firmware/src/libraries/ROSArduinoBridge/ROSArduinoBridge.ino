@@ -61,7 +61,7 @@
 
    /* L298N Dual H-Bridge Motor Controller */
    #define L298N_DUAL_HBRIDGE
-   
+
    /* Encoders directly attached to Arduino board */
    //#define ARDUINO_ENC_COUNTER
   /* My customized encoders */
@@ -267,6 +267,7 @@ void setup() {
     PCICR |= (1 << PCIE1) | (1 << PCIE2);
   #endif
   initMotorController();
+  initEncoders();
   resetPID();
 #endif
 

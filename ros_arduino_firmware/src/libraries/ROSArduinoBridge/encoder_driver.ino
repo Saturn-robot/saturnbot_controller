@@ -134,16 +134,16 @@ long readEncoder(int i) {
   else return right_enc_pos;
 }
 
-  /* Wrap the encoder reset function */
-  void resetEncoder(int i) {
-    if (i == LEFT){
-      left_enc_pos=0L;
-      return;
-    } else {
-      right_enc_pos=0L;
-      return;
-    }
+/* Wrap the encoder reset function */
+void resetEncoder(int i) {
+  if (i == LEFT){
+    left_enc_pos=0L;
+    return;
+  } else {
+    right_enc_pos=0L;
+    return;
   }
+}
 #else
   #error A encoder driver must be selected!
 #endif
