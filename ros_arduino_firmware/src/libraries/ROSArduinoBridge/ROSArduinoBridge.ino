@@ -217,7 +217,7 @@ int runCommand() {
       moving = 0;
     }
     else moving = 1;
-    leftPID.TargetTicksPerFrame = arg1;
+    leftPID.TargetTicksPerFrame = -arg1;  /* Because the left motor has some problems */
     rightPID.TargetTicksPerFrame = arg2;
     Serial.println("OK");
     break;

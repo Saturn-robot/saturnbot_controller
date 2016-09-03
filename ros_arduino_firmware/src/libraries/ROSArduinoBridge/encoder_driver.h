@@ -15,6 +15,11 @@
 #endif
 
 #ifdef ARDUINO_MY_COUNTER
+  #define LEFT_ENC_A 2
+  #define LEFT_ENC_B 22
+  #define RIGHT_ENC_A 21
+  #define RIGHT_ENC_B 24
+  void initEncoders();
   void leftEncoderEvent();
   void rightEncoderEvent();
 #endif
