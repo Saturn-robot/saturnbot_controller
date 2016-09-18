@@ -343,7 +343,6 @@ class Arduino:
 #            maxsonar trigger pin is RX, and the echo pin is PW.
 #        '''
 #        return self.execute('z %d %d' %(triggerPin, outputPin)) 
- 
 
 """ Basic test for connectivity """
 if __name__ == "__main__":
