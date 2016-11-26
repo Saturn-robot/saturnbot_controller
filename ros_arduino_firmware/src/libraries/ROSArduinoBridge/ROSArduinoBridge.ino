@@ -232,6 +232,16 @@ int runCommand() {
     Ko = pid_args[3];
     Serial.println("OK");
     break;
+  case READ_PIDIN:
+    Serial.print(readPidIn(LEFT));
+    Serial.print(" ");
+    Serial.println(readPidIn(RIGHT));
+    break;
+  case READ_PIDOUT:
+    Serial.print(readPidOut(LEFT));
+    Serial.print(" ");
+    Serial.println(readPidOut(RIGHT));
+    break;
 #endif
   default:
     Serial.println("Invalid Command");

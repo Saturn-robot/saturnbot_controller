@@ -1,7 +1,7 @@
 /* Functions and type-defs for PID control.
 
    Taken mostly from Mike Ferguson's ArbotiX code which lives at:
-   
+
    http://vanadium-ros-pkg.googlecode.com/svn/trunk/arbotix/
 */
 
@@ -107,7 +107,7 @@ void updatePID() {
   /* Read the encoders */
   leftPID.Encoder = readEncoder(LEFT);
   rightPID.Encoder = readEncoder(RIGHT);
-  
+
   /* If we're not moving there is nothing more to do */
   if (!moving){
     /*
@@ -128,3 +128,22 @@ void updatePID() {
   setMotorSpeeds(leftPID.output, rightPID.output);
 }
 
+long readPidIn(int i) {
+  long pidin = 0;
+  if (i == LEFT) {
+    pidin = leftPID.PrevInput;
+  } else {
+    pidin = rightPID.PrevInput;
+  }
+  return pidin;
+}
+
+long readPidOut(int i) {
+  long pidout = 0;
+  if (i == LEFT) {
+    pidout = leftPID.output;
+  } else {
+    pidout = rightPID.output;
+  }
+  return pidout;
+}

@@ -22,7 +22,7 @@
   #define RIGHT           1
   #define FORWARDS        true
   #define BACKWARDS       false
-
+  // Used to adjust and check pid Parameters
+  #define READ_PIDIN      'i'
+  #define READ_PIDOUT     'f'
 #endif
-
-
