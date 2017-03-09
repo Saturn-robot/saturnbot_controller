@@ -101,13 +101,13 @@
     else {
         if(spd>=0){
             directionRight = FORWARDS;
-            digitalWrite(IN3, HIGH);
-            digitalWrite(IN4, LOW);
+            digitalWrite(IN4, HIGH);
+            digitalWrite(IN3, LOW);
             analogWrite(ENB, spd);
         }else if(spd<0){
             directionRight = BACKWARDS;
-            digitalWrite(IN4, HIGH);
-            digitalWrite(IN3, LOW);
+            digitalWrite(IN3, HIGH);
+            digitalWrite(IN4, LOW);
             analogWrite(ENB, -spd);
         }
     }
