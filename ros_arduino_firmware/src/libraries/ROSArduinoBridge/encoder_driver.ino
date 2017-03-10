@@ -125,7 +125,7 @@
   /* Wrap the encoder reading function */
   long readEncoder(int i) {
     if (i == LEFT) return left_enc_pos;
-    else return right_enc_pos;
+    else return -right_enc_pos;    // It's just because my right encoder get reverse value so if yours is normal, don't add "-"
   }
 
   /* Wrap the encoder reset function */
