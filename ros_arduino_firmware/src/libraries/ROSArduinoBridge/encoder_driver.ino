@@ -124,9 +124,8 @@
 
   /* Wrap the encoder reading function */
   long readEncoder(int i) {
-    //long real_left_enc_pos = (- left_enc_pos);
     if (i == LEFT) return left_enc_pos;
-    else return right_enc_pos;
+    else return -right_enc_pos;
   }
 
   /* Wrap the encoder reset function */
