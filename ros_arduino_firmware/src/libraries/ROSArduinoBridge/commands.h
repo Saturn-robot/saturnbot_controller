@@ -3,7 +3,7 @@
 */
 
 #ifndef COMMANDS_H
-  #define COMMANDS_H
+#define COMMANDS_H
 
   #define ANALOG_READ    'a'
   #define GET_BAUDRATE   'b'
@@ -24,5 +24,3 @@
   #define BACKWARDS       false
 
 #endif
-
-
