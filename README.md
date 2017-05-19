@@ -1,10 +1,8 @@
-#写在前面
+# 写在前面
 -----
 本文是根据ros\_arduino\_bridge功能包的官方文档翻译修改而来，目的是为了便于广大网友更方便的学习使用该功能包。本文主要针对indigo-devel版本进行介绍，也会捎带介绍一下其他的版本。文中存在我的一些主观看法，如您有其他观点可以与我交流，我的email：<chaoyanglius@outlook.com>。这篇博文篇幅有些冗长，希望各位网友耐心阅读。
 
-<font color=red>**欢迎广大网友批评指正，如需转载请注明出处。**</font>
-
-#概述
+# 概述
 ------
 使用这个功能包时，注意选择相应的版本，因为不同的版本之间有些并不能兼容。indigo-devel branch是针对ROS Indigo以及更高版本的，它使用的是Catkin编译系统，它对于ROS Hydro也是兼容的；而master 分支目前还在测试中，可能在某些板子或电脑上无法正常运行，我曾今使用过这个分支，但是出了很多问题，如串口（serial）就无法与主机正常交流、波特率的大小设置等问题。本文主要针对indigo-devel版本进行介绍，也会捎带介绍一下其他的版本。
 
@@ -25,11 +23,11 @@
 
 **NOTE:** Robogaia Mega Encoder shield 仅适用于Arduino Mega，而板上编码计数器(ARDUINO_ENC_COUNTER)目前仅支持Arduino Uno，这些是官方文档上的说法。但是实际上只要你有一定的编程基础，你就可以随心所欲，想让它支持什么硬件就支持什么硬件。
 
-#关于ROS官方文档
+# 关于ROS官方文档
 -----------
 在这个ROS wiki [ros\_arduino\_bridge](http://www.ros.org/wiki/ros_arduino_bridge)里可以找到一个标准的ROS风格的文档，但是貌似这个wiki里面的信息并不全面，应该说很不全面，不会有什么实质性的帮助。也许是因为在它的github仓库里有详细的说明，所以它才偷懒了吧！所以如果你想要了解关于该功能包的详细内容，请直接查看它的github仓库里的[README文件](https://github.com/hbrobotics/ros_arduino_bridge)。当然里面全是E文，所以如果你觉得有困难的话，可以委屈一下继续阅读我的拙文，当然这也是我写这篇博文的一个原因，我十分乐意为广大网友翻译英文资料，如有翻译不当的地方，欢迎各位批评指正，我的e-mail是<chaoyanglius@outlook.com>。
 
-#系统要求
+# 系统要求
 ---------
 Python 串口：使用下面的命令可以在Ubuntu下安装python-serial功能包
 ```bash
@@ -62,7 +60,7 @@ Robogaia Mega Encoder shield的库可以在这里找到；
 
 这些库应该被安装到你的标准Arduino sketchbook/libraries路径下面。最后，这个功能包集假设你使用的Arduino IDE的版本是1.0或以上，我使用的是1.6.8。
 
-#在你的Linux下准备串口
+# 在你的Linux下准备串口
 ------------
 你的Arduino很可能是通过接口`/dev/ttyACM#` 或者 `/dev/ttyUSB#`来连接你的Linux系统的。这里的`#`可以是0,1,2等数字，当然这根据你连接的设备数量而定。得到这个数字`#`最简单的方式就是拔掉所有的USB设备，然后插上你的Arduino，然后运行下面这个命令：
 
@@ -107,7 +105,7 @@ $ groups
 然后如果你可以在列出的组中找到dialout，这就说明你已经加入到dialout中了。
 
 
-#安装ros\_arduino\_bridge功能包集
+# 安装ros\_arduino\_bridge功能包集
 -----------
 
 ```bash
@@ -137,7 +135,7 @@ $ cp -rp `rospack find ros_arduino_firmware`/src/libraries/ROSArduinoBridge ROSA
 	
 下一节描述的是如何配置，编译并上传这个sketch。
 
-#加载ROSArduinoBridge的Sketch
+# 加载ROSArduinoBridge的Sketch
 -----------
 
 - 如果你正在使用基础控制器功能包（`base controller`），那么你必须确保你已经在Arduino sketchbook/libraries文件夹里面安装了合适的电动机控制器和编码器的相关库。
@@ -164,7 +162,7 @@ $ cp -rp `rospack find ros_arduino_firmware`/src/libraries/ROSArduinoBridge ROSA
 
 一切都准备好后你就可以把这个sketch编译并上传到你的Arduino板子上上了。
 
-#固件程序命令
+# 固件程序命令
 ----------
 这个ROSArduino库接受单字母命令来轮询传感器、控制伺服机、驱动机器人以及读取编码器。这些命令可以通过串口接口来发送给Arduino，比如Arduino的串口监视器。
 
@@ -210,7 +208,7 @@ $ cp -rp `rospack find ros_arduino_firmware`/src/libraries/ROSArduinoBridge ROSA
 
 PS:**我在此强调一遍，务必要进行[这一节](#固件程序命令)以及[下一节](#测试你的电线连接)的测试，否则你不能保证python-serial（后面会说到）与主机交流正常。**
 
-#测试你的电线连接
+# 测试你的电线连接
 在一个差速轮式机器人上，电动机使用两个极性相反的接头来连接到电动机控制器上的。同样地，连接到编码器上的A/B端也是互斥的。然而，你仍然需要确保这样两个要求：
 
 - 当给一个正向的速度，轮子向前移动；
@@ -220,7 +218,7 @@ PS:**我在此强调一遍，务必要进行[这一节](#固件程序命令)以�
 
 最后，你可以先使用`r`命令把编码器计数清零，然后通过手动粗略地旋转轮子一整圈，再通过`e`命令来验证获取到的编码器计数是否为预期的结果。
 
-#配置ros\_arduino\_python节点
+# 配置ros\_arduino\_python节点
 
 既然你的Arduino已经可以按要求运行sketch了，那么现在你就可以在你的PC上把它配置为ROS节点。你可以在通过编辑ros\_arduino\_python/config路径下的YAML文件定义的机器人尺寸，PID参数，以及传感器配置信息。所以首先进入到这个路径中：
 
@@ -329,7 +327,7 @@ joints: {
 
 PID参数比较难设置，你可以先按照示例中的值设置。但是在你第一次发送转弯命令的时候，一定要把你的机器人放在小块儿上。
 
-#启动ros_arduino_python节点
+# 启动ros_arduino_python节点
 
 你现在看一下路径ros\_arduino\_python/launch下的文件arduino.launch。正如你所看到的，它指向一个名叫my_arduino_params.yaml的文件（之前创建的）。
 
@@ -364,7 +362,7 @@ $ roslaunch ros_arduino_python arduino.launch
 
 如果你在你的机器人上装的有Ping声呐而且你也在配置文件里面定义了它们，它们就会闪一下来告诉你已经连接成功。
 
-#查看传感器数据
+# 查看传感器数据
 
 你可以回显传感器状态主题来查看所有传感器的数据：
 
@@ -390,7 +388,7 @@ $ rostopic echo /arduino/sensor/ir_front_center
 ```bash
 $ rxplot -p 60 /arduino/sensor/ir_front_center/range
 ```
-#发送Twist命令与查看里程计数据
+# 发送Twist命令与查看里程计数据
 
 ros\_arduino\_python功能包也定义了一些ROS服务，如下所示：
 
@@ -427,7 +425,7 @@ byte servoInitPosition [N_SERVOS] = { 90, 90 }; // [0, 180] degrees
 $ rosservice call /arduino/servo_read id
 ```
 
-#使用板上编码器计数（仅支持ArduinoUno）
+# 使用板上编码器计数（仅支持ArduinoUno）
 
 对于Arduino Uno，这个固件程序支持板上的编码器计数。这样的话，编码器就直接可以连接到Arduino板上，而不用借助任何额外的编码器设备（例如RoboGaia encoder shield）
 
@@ -453,7 +451,7 @@ Right wheel encoder B output -- Arduino UNO pin A5
 
 这时你就可以编译并上传到Arduino上了。
 
-#NOTE
+# 注意
 -------
 如果你没有文档中所要求的硬件来运行这个基础控制器，但是你仍然想使用其他兼容Arduino的控制器来读取传感器以及控制PWM伺服机，那么请按照下面的步骤：
 
@@ -482,4 +480,4 @@ Right wheel encoder B output -- Arduino UNO pin A5
 
 # 可能遇到的错误
 
-我在使用这个功能包的时候遇到了不少错误，因此我特意将这些错误及解决方法总结出来并与大家分享。
+我在使用这个功能包的时候遇到了不少错误，因此我特意将这些错误及解决方法总结出来并与大家分享:[ros_arduino_bridge功能包集的使用错误及解决方法总结](http://blog.csdn.net/github_30605157/article/details/51621965)。
