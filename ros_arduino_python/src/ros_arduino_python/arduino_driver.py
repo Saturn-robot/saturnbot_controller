@@ -26,6 +26,7 @@ from math import pi as PI, degrees, radians
 import os, time, sys, traceback
 from serial.serialutil import SerialException, SerialTimeoutException
 from serial import Serial
+import rospy
 
 SERVO_MAX = 180
 SERVO_MIN = 0
@@ -47,7 +48,7 @@ class Arduino:
         self.encoder_count = 0
         self.writeTimeout = timeout
         self.interCharTimeout = timeout / 30.
-
+        self.motors_reversed = rospy.get_param("~motors_reversed", False)
         # Keep things thread safe
         self.mutex = thread.allocate_lock()
 
@@ -268,6 +269,8 @@ class Arduino:
             raise SerialException
             return None
         else:
+            if self.motors_reversed:
+                values[0], values[1] = -values[0], -values[1]
             return values
 
     def reset_encoders(self):
@@ -278,6 +281,8 @@ class Arduino:
     def drive(self, right, left):
         ''' Speeds are given in encoder ticks per PID interval
         '''
+        if self.motors_reversed:
+            left, right = -left, -right
         return self.execute_ack('m %d %d' %(right, left))
 
     def drive_m_per_s(self, right, left):
