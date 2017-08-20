@@ -46,14 +46,14 @@ class CommandException(Exception):
         return repr(self.code)
 
 class Arduino:
-    def __init__(self, port="/dev/ttyUSB0", baudrate=57600, timeout=0.5, debug=False):
+    def __init__(self, port="/dev/ttyUSB0", baudrate=57600, timeout=0.5, motors_reversed=False, debug=False):
 
         self.PID_RATE = 30 # Do not change this!  It is a fixed property of the Arduino PID controller.
         self.PID_INTERVAL = 1000 / 30
-
         self.port = port
         self.baudrate = baudrate
         self.timeout = timeout
+        self.motors_reversed = motors_reversed
         self.encoder_count = 0
         self.writeTimeout = timeout
         self.debug = debug
@@ -224,6 +224,8 @@ class Arduino:
         if len(values) != 2:
             return None
         else:
+            if self.motors_reversed:
+                values[0], values[1] = -int(values[0]), -int(values[1])
             return map(int, values)
 
     def reset_encoders(self):
@@ -251,6 +253,8 @@ class Arduino:
     def drive(self, right, left):
         ''' Speeds are given in encoder ticks per PID interval
         '''
+        if self.motors_reversed:
+            left, right = -left, -right
         return self.execute_ack('m %d %d' %(right, left))
 
     def drive_m_per_s(self, right, left):
