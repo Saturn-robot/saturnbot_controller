@@ -245,7 +245,7 @@ class Arduino:
         '''
         values = self.execute_array('i')
 
-        if len(values) != 12:
+        if len(values) != 9:
             return None
         else:
             return map(float, values)

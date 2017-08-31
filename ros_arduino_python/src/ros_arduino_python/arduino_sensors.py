@@ -2,7 +2,7 @@
 
 """
     Sensor class for the arudino_python package
-    
+
     Created for the Pi Robot Project: http://www.pirobot.org
     Copyright (c) 2012 Patrick Goebel.  All rights reserved.
 
@@ -10,17 +10,17 @@
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details at:
-    
+
     http://www.gnu.org/licenses/gpl.html
 """
 
 import rospy
-from sensor_msgs.msg import Range, Imu
+from sensor_msgs.msg import Range, Imu, MagneticField
 from geometry_msgs.msg import Twist, Quaternion, Vector3
 from ros_arduino_python.arduino_driver import CommandErrorCode, CommandException
 from ros_arduino_python.diagnostics import DiagnosticsUpdater
@@ -44,7 +44,7 @@ class MessageType:
     INT = 4
     BOOL = 5
     IMU = 6
-    
+
 class Sensor(object):
     def __init__(self, device, name, pin=None, rate=0, direction="input", frame_id="base_link", **kwargs):
         self.device = device
@@ -65,7 +65,7 @@ class Sensor(object):
         diagnostics_rate = float(self.get_kwargs(kwargs, 'diagnostics_rate', 1))
 
         # The DiagnosticsUpdater class is defined in the diagnostics.py module
-        self.diagnostics = DiagnosticsUpdater(self, name + '_sensor', diagnotics_error_threshold, diagnostics_rate)    
+        self.diagnostics = DiagnosticsUpdater(self, name + '_sensor', diagnotics_error_threshold, diagnostics_rate)
 
         # Initialize the component's value
         self.value = None
@@ -112,7 +112,7 @@ class Sensor(object):
         self.msg.value = self.value
         self.msg.header.stamp = rospy.Time.now()
         self.pub.publish(self.msg)
-    
+
     def poll(self):
         now = rospy.Time.now()
         if now > self.t_next:
@@ -135,13 +135,13 @@ class Sensor(object):
 
             # Compute the next polling time stamp
             self.t_next = now + self.t_delta
-    
+
 class AnalogSensor(Sensor):
     def __init__(self, *args, **kwargs):
         super(AnalogSensor, self).__init__(*args, **kwargs)
-                
+
         self.message_type = MessageType.ANALOG
-        
+
         self.msg = Analog()
         self.msg.header.frame_id = self.frame_id
 
@@ -174,9 +174,9 @@ class AnalogSensor(Sensor):
 class AnalogFloatSensor(AnalogSensor):
     def __init__(self, *args, **kwargs):
         super(AnalogFloatSensor, self).__init__(*args, **kwargs)
-                
+
         self.message_type = MessageType.ANALOG
-        
+
         self.msg = AnalogFloat()
         self.msg.header.frame_id = self.frame_id
 
@@ -193,25 +193,25 @@ class AnalogFloatSensor(AnalogSensor):
 
     def read_value(self):
         return self.scale * (self.device.analog_read(self.pin) - self.offset)
-    
+
     def write_value(self, value):
         return self.device.analog_write(self.pin, value)
-    
+
     def sensor_read_handler(self, req=None):
         self.value = self.read_value()
         return AnalogFloatSensorReadResponse(self.value)
-    
+
     def sensor_write_handler(self, req):
         self.write_value(req.value)
         self.value = req.value
         return AnalogFloatSensorWriteResponse()
-        
+
 class DigitalSensor(Sensor):
     def __init__(self, *args, **kwargs):
         super(DigitalSensor, self).__init__(*args, **kwargs)
-        
+
         self.message_type = MessageType.BOOL
-        
+
         self.msg = Digital()
         self.msg.header.frame_id = self.frame_id
 
@@ -231,40 +231,40 @@ class DigitalSensor(Sensor):
 
     def read_value(self):
         return self.device.digital_read(self.pin)
-    
+
     def write_value(self, value=None):
         # Alternate HIGH/LOW when publishing at a fixed rate
         if self.rate != 0:
             self.value = not self.value
         else:
             self.value = value
-        
+
         return self.device.digital_write(self.pin, self.value)
-    
+
     def sensor_read_handler(self, req=None):
         self.value = self.read_value()
         return DigitalSensorReadResponse(self.value)
-    
+
     def sensor_write_handler(self, req):
         self.write_value(req.value)
         self.value = req.value
-        return DigitalSensorWriteResponse()  
-    
+        return DigitalSensorWriteResponse()
+
 class RangeSensor(Sensor):
     def __init__(self, *args, **kwargs):
         super(RangeSensor, self).__init__(*args, **kwargs)
-        
+
         self.message_type = MessageType.RANGE
-        
+
         self.msg = Range()
         self.msg.header.frame_id = self.frame_id
 
     def create_publisher(self):
         self.pub = rospy.Publisher("~sensor/" + self.name, Range, queue_size=5)
-    
+
     def create_services(self):
         rospy.Service('~' + self.name + '/read', AnalogFloatSensorRead, self.sensor_read_handler)
-        
+
     def publish_message(self):
         self.value = self.read_value()
         self.msg.range = self.value
@@ -278,61 +278,61 @@ class RangeSensor(Sensor):
 class SonarSensor(RangeSensor):
     def __init__(self, *args, **kwargs):
         super(SonarSensor, self).__init__(*args, **kwargs)
-        
+
         self.msg.radiation_type = Range.ULTRASOUND
-        
+
 class IRSensor(RangeSensor):
     def __init__(self, *args, **kwargs):
         super(IRSensor, self).__init__(*args, **kwargs)
-        
+
         self.msg.radiation_type = Range.INFRARED
-        
+
 class Ping(SonarSensor):
     def __init__(self,*args, **kwargs):
         super(Ping, self).__init__(*args, **kwargs)
-                
+
         self.msg.field_of_view = 0.7
         self.msg.min_range = 0.02
         self.msg.max_range = 3.0
-        
+
     def read_value(self):
         # The Arduino Ping code returns the distance in centimeters
         cm = self.device.ping(self.pin)
-        
+
         # Convert it to meters for ROS
         distance = cm / 100.0
-        
+
         return distance
-        
+
 class GP2D12(IRSensor):
     # The GP2D12 has been replaced by the GP2Y0A21YK0F
     def __init__(self, *args, **kwargs):
         super(GP2D12, self).__init__(*args, **kwargs)
-        
+
         self.msg.field_of_view = 0.09
         self.msg.min_range = 0.10
         self.msg.max_range = 0.80
-        
+
     def read_value(self):
         value = self.device.analog_read(self.pin)
-        
+
         # The GP2D12 cannot provide a meaning result closer than 3 cm.
         if value <= 3.0:
             return float('NaN')
-        
+
         try:
             #distance = pow(4187.8 / value, 1.106)
             distance = (6787.0 / (float(value) - 3.0)) - 4.0
         except:
             return float('NaN')
-            
+
         # Convert to meters
         distance /= 100.0
-        
+
         # If we get a spurious reading, set it to the max_range
         if distance > self.msg.max_range: distance = float('NaN')
         if distance < self.msg.min_range: distance = float('NaN')
-        
+
         return distance
 
 class IMU(Sensor):
@@ -343,7 +343,9 @@ class IMU(Sensor):
         self.direction = "input"
 
         self.msg = Imu()
+        self.mag_msg = MagneticField()
         self.msg.header.frame_id = self.frame_id
+        self.mag_msg.header.frame_id = self.frame_id
 
         self.msg.orientation_covariance = [1e6, 0, 0, 0, 1e6, 0, 0, 0, 1e-6]
         self.msg.angular_velocity_covariance = [1e6, 0, 0, 0, 1e6, 0, 0, 0, 1e-6]
@@ -351,6 +353,7 @@ class IMU(Sensor):
 
     def create_publisher(self):
         self.pub = rospy.Publisher("~sensor/" + self.name, Imu, queue_size=5)
+        self.mag_pub = rospy.Publisher("imu/mag", MagneticField, queue_size=5)
 
     def read_value(self):
         '''
@@ -359,41 +362,47 @@ class IMU(Sensor):
         [ax, ay, az, gx, gy, gz, mx, my, mz, roll, pitch, ch]
 
         where a stands for accelerometer, g for gyroscope and m for magnetometer.
-        The last value ch stands for "compensated heading" that some IMU's can 
-        compute to compensate magnetic heading for the current roll and pitch. 
+        The last value ch stands for "compensated heading" that some IMU's can
+        compute to compensate magnetic heading for the current roll and pitch.
         '''
         data  = self.device.get_imu_data()
 
         try:
-            ax, ay, az, gx, gy, gz, mx, my, mz, roll, pitch, ch = data
+            ax, ay, az, gx, gy, gz, mx, my, mz = data
         except:
             rospy.logerr("Invalid value read from sensor: " + str(self.name))
             return None
 
-        roll = radians(roll)
-        pitch = -radians(pitch)
+        ## roll = radians(roll)
+        ## pitch = -radians(pitch)
 
-        self.msg.linear_acceleration.x = ax
-        self.msg.linear_acceleration.y = ay
-        self.msg.linear_acceleration.z = az
+        self.msg.linear_acceleration.x = ay
+        self.msg.linear_acceleration.y = ax
+        self.msg.linear_acceleration.z = -az
 
-        self.msg.angular_velocity.x = radians(gx)
-        self.msg.angular_velocity.y = radians(gy)
-        self.msg.angular_velocity.z = radians(gz)
+        self.msg.angular_velocity.x = radians(gy)
+        self.msg.angular_velocity.y = radians(gx)
+        self.msg.angular_velocity.z = -radians(gz)
+        # magnetic data
+        self.mag_msg.magnetic_field.x = my
+        self.mag_msg.magnetic_field.y = mx
+        self.mag_msg.magnetic_field.z = mz
 
-        if ch != -999:
-            yaw = -radians(ch)
-        else:
-            yaw = -radians(mz)
-
-        (self.msg.orientation.x, self.msg.orientation.y, self.msg.orientation.z, self.msg.orientation.w) = quaternion_from_euler(roll, pitch, yaw)
+        # if ch != -999:
+        #     yaw = -radians(ch)
+        # else:
+        #     yaw = -radians(mz)
+        #
+        # (self.msg.orientation.x, self.msg.orientation.y, self.msg.orientation.z, self.msg.orientation.w) = quaternion_from_euler(roll, pitch, yaw)
 
         return data
 
     def publish_message(self):
         self.read_value()
         self.msg.header.stamp = rospy.Time.now()
+        self.mag_msg.header.stamp = rospy.Time.now()
         self.pub.publish(self.msg)
+        self.mag_pub.publish(self.mag_msg)
 
 class Gyro(Sensor):
     def __init__(self, *args, **kwargs):
@@ -456,7 +465,7 @@ class Gyro(Sensor):
         # If the robot is not moving, update the gyro calibration
         if self.base_controller is not None and self.base_controller.current_speed == Twist():
             self.update_calibration(gyro_data)
-   
+
         # If this is the first measurement, just record the current time
         if self.last_time is None:
             self.last_time = rospy.Time.now()
@@ -551,7 +560,7 @@ class PhidgetsVoltage(AnalogFloatSensor):
 class PhidgetsCurrent(AnalogFloatSensor):
     def __init__(self, *args, **kwargs):
         super(PhidgetsCurrent, self).__init__(*args, **kwargs)
-        
+
     def read_value(self):
         # From the Phidgets documentation for the 20 amp DC sensor
         current = 0.05 * (self.device.analog_read(self.pin) - 500.)
@@ -570,5 +579,3 @@ class MaxEZ1Sensor(SonarSensor):
 
     def read_value(self):
         return self.device.get_MaxEZ1(self.trigger_pin, self.output_pin)
-
-            
