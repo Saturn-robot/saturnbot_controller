@@ -2,7 +2,7 @@
 
 """
     Servo class for the arudino_python package
-    
+
     Created for the Pi Robot Project: http://www.pirobot.org
     Copyright (c) 2015 Patrick Goebel.  All rights reserved.
 
@@ -10,21 +10,21 @@
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details at:
-    
+
     http://www.gnu.org/licenses/gpl.html
-    
+
     Borrowed heavily from Mike Feguson's ArbotiX servos_controller.py code.
 """
 import rospy
 from std_msgs.msg import Float64
-from ros_arduino_msgs.srv import Relax, Enable, SetSpeed, SetSpeedResponse, RelaxResponse, EnableResponse
-from ros_arduino_python.diagnostics import DiagnosticsUpdater
-from ros_arduino_python.arduino_driver import CommandErrorCode, CommandException
+from saturnbot_msgs.srv import Relax, Enable, SetSpeed, SetSpeedResponse, RelaxResponse, EnableResponse
+from base_controller.diagnostics import DiagnosticsUpdater
+from base_controller.arduino_driver import CommandErrorCode, CommandException
 from controllers import *
 
 from math import radians, degrees, copysign
@@ -65,13 +65,13 @@ class Joint:
 class Servo(Joint):
     def __init__(self, device, name, ns="~joints"):
         Joint.__init__(self, device, name)
-        
+
         # Construct the namespace for the joint
         namespace = ns + "/" + name + "/"
-        
+
         # The Arduino pin used by this servo
         self.pin = int(rospy.get_param(namespace + "pin"))
-        
+
         # Hobby servos have a rated speed giving in seconds per 60 degrees
         # A value of 0.24 seconds per 60 degrees is typical.
         self.rated_speed = rospy.get_param(namespace + 'rated_speed', 0.24) # seconds per 60 degrees
@@ -108,7 +108,7 @@ class Servo(Joint):
 
         # Do we want to reverse positive motion
         self.invert = rospy.get_param(namespace + 'invert', False)
-        
+
         # Intialize the desired position of the servo from the init_position parameter
         self.desired = radians(rospy.get_param(namespace + 'init_position', 0))
 
@@ -165,7 +165,7 @@ class Servo(Joint):
                 step_delay = 1000.0 * radians(1.0) * ((1.0 / (self.joint_speed_scale_correction * target_speed)) - (1.0 / self.rated_speed_rad_per_sec))
             except:
                 step_delay = 4294967295 # 2^32 - 1
-                            
+
         # Minimum step delay is 0 millisecond
         step_delay = max(0, step_delay)
 
@@ -185,7 +185,7 @@ class Servo(Joint):
 
     def get_interpolated_position(self):
         time_since_start = rospy.Time.now() - self.time_move_started
-    
+
         return self.start_position + self.servo_speed * self.direction * time_since_start.to_sec()
 
     def relax_cb(self, req):
@@ -290,12 +290,12 @@ class ServoController():
         self.delta_t = rospy.Duration(1.0 / self.device.joint_update_rate)
         self.next_update = rospy.Time.now() + self.delta_t
 
-    def poll(self):     
+    def poll(self):
         """ Read and write servo positions and velocities. """
         if rospy.Time.now() > self.next_update:
             for servo in self.servos:
 
-                
+
                 # Check to see if we are within 2 degrees of the desired position or gone past it
                 if not servo.in_trajectory and servo.is_moving:
                     if abs(servo.position - servo.desired) < radians(2.0) or copysign(1, servo.desired - servo.position) != servo.direction:
@@ -303,7 +303,7 @@ class ServoController():
                         servo.is_moving = False
                         servo.velocity = 0.0
                         duration =  rospy.Time.now() - servo.time_move_started
-                        
+
                 # If the servo is still moving, update its interpolated position and velocity
                 if servo.is_moving:
                     try:
@@ -317,7 +317,7 @@ class ServoController():
                         # We cannot interpolate both position and velocity so just set velocity to the current speed
                         servo.velocity = servo.servo_speed
                         servo.position_last = servo.position
-                        
+
                         # Update diagnostics counters
                         servo.diagnostics.reads += 1
                         servo.diagnostics.total_reads += 1
@@ -341,4 +341,3 @@ class ServoController():
                         rospy.logerr("Invalid value read from joint: " + str(self.name))
 
             self.next_update = rospy.Time.now() + self.delta_t
-        

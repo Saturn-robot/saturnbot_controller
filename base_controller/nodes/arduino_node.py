@@ -20,15 +20,15 @@
 """
 
 import rospy
-from ros_arduino_python.arduino_driver import Arduino
-from ros_arduino_python.arduino_sensors import *
-from ros_arduino_msgs.srv import *
-from ros_arduino_python.diagnostics import DiagnosticsUpdater, DiagnosticsPublisher
-from ros_arduino_python.cfg import ROSArduinoBridgeConfig
-from ros_arduino_python.base_controller import BaseController
-from ros_arduino_python.servo_controller import Servo, ServoController
-from ros_arduino_python.follow_controller import FollowController
-from ros_arduino_python.joint_state_publisher import JointStatePublisher
+from base_controller.arduino_driver import Arduino
+from base_controller.arduino_sensors import *
+from saturnbot_msgs.srv import *
+from base_controller.diagnostics import DiagnosticsUpdater, DiagnosticsPublisher
+from base_controller.cfg import ROSArduinoBridgeConfig
+from base_controller.base_controller import BaseController
+from base_controller.servo_controller import Servo, ServoController
+from base_controller.follow_controller import FollowController
+from base_controller.joint_state_publisher import JointStatePublisher
 import dynamic_reconfigure.server
 import dynamic_reconfigure.client
 from geometry_msgs.msg import Twist
@@ -271,7 +271,7 @@ class ArduinoROS():
         for controller in self.device.controllers:
             controller.startup()
 
-        print "\n==> ROS Arduino Bridge ready for action!"
+        print "\n==> Saturnbot Controller ready for action!"
 
         # Start polling the sensors, base controller, and servo controller
         while not rospy.is_shutdown():
@@ -461,7 +461,7 @@ class ArduinoROS():
         return config
 
     def shutdown(self):
-        rospy.loginfo("Shutting down Arduino node...")
+        rospy.loginfo("Shutting down saturnbot controller node...")
 
         # Stop the robot
         if self.use_base_controller:

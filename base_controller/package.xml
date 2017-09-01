@@ -1,16 +1,16 @@
 <package>
-  <name>ros_arduino_python</name>
+  <name>base_controller</name>
   <version>0.2.0</version>
   <description>
     ROS Arduino Python.
   </description>
-  <author>Patrick Goebel</author>
-  <maintainer email="patrick@pirobot.org">Patrick Goebel</maintainer>
+  <author>Liu Chaoyang</author>
+  <maintainer email="chaoyanglius@gmail.com">Patrick Goebel</maintainer>
   <license>BSD</license>
-  <url>http://ros.org/wiki/ros_arduino_python</url>
-  
+  <url>http://ros.org/wiki/base_controller</url>
+
   <buildtool_depend>catkin</buildtool_depend>
-  
+
   <build_depend>dynamic_reconfigure</build_depend>
   <build_depend>diagnostic_updater</build_depend>
   <build_depend>diagnostic_aggregator</build_depend>

@@ -22,10 +22,10 @@
 import rospy
 from sensor_msgs.msg import Range, Imu, MagneticField
 from geometry_msgs.msg import Twist, Quaternion, Vector3
-from ros_arduino_python.arduino_driver import CommandErrorCode, CommandException
-from ros_arduino_python.diagnostics import DiagnosticsUpdater
-from ros_arduino_msgs.msg import *
-from ros_arduino_msgs.srv import *
+from base_controller.arduino_driver import CommandErrorCode, CommandException
+from base_controller.diagnostics import DiagnosticsUpdater
+from saturnbot_msgs.msg import *
+from saturnbot_msgs.srv import *
 from math import pow, radians
 from tf.transformations import quaternion_from_euler
 import sys
@@ -373,9 +373,6 @@ class IMU(Sensor):
             rospy.logerr("Invalid value read from sensor: " + str(self.name))
             return None
 
-        ## roll = radians(roll)
-        ## pitch = -radians(pitch)
-
         self.msg.linear_acceleration.x = ay
         self.msg.linear_acceleration.y = ax
         self.msg.linear_acceleration.z = -az
@@ -387,13 +384,6 @@ class IMU(Sensor):
         self.mag_msg.magnetic_field.x = my
         self.mag_msg.magnetic_field.y = mx
         self.mag_msg.magnetic_field.z = mz
-
-        # if ch != -999:
-        #     yaw = -radians(ch)
-        # else:
-        #     yaw = -radians(mz)
-        #
-        # (self.msg.orientation.x, self.msg.orientation.y, self.msg.orientation.z, self.msg.orientation.w) = quaternion_from_euler(roll, pitch, yaw)
 
         return data
 
