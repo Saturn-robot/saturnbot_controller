@@ -24,7 +24,7 @@ from base_controller.arduino_driver import Arduino
 from base_controller.arduino_sensors import *
 from saturnbot_msgs.srv import *
 from base_controller.diagnostics import DiagnosticsUpdater, DiagnosticsPublisher
-from base_controller.cfg import ROSArduinoBridgeConfig
+from base_controller.cfg import SaturnbotControllerConfig
 from base_controller.base_controller import BaseController
 from base_controller.servo_controller import Servo, ServoController
 from base_controller.follow_controller import FollowController
@@ -143,7 +143,7 @@ class ArduinoROS():
             rospy.Service('~update_pid', UpdatePID, self.UpdatePIDHandler)
 
             # Fire up the dynamic_reconfigure server
-            dyn_server = dynamic_reconfigure.server.Server(ROSArduinoBridgeConfig, self.dynamic_reconfigure_server_callback, namespace=self.name)
+            dyn_server = dynamic_reconfigure.server.Server(SaturnbotControllerConfig, self.dynamic_reconfigure_server_callback, namespace=self.name)
 
             # Connect to the dynamic_reconfigure client
             dyn_client = dynamic_reconfigure.client.Client (self.name, timeout=5)

@@ -28,7 +28,7 @@ from math import sin, cos, pi
 from geometry_msgs.msg import Quaternion, Twist, Pose
 from nav_msgs.msg import Odometry
 from tf.broadcaster import TransformBroadcaster
-from base_controller.diagnostics import DiagnosticsUpdater
+from diagnostics import DiagnosticsUpdater
 
 
 """ Class to receive Twist commands and publish Odometry data """

@@ -23,8 +23,8 @@
 import rospy
 from std_msgs.msg import Float64
 from saturnbot_msgs.srv import Relax, Enable, SetSpeed, SetSpeedResponse, RelaxResponse, EnableResponse
-from base_controller.diagnostics import DiagnosticsUpdater
-from base_controller.arduino_driver import CommandErrorCode, CommandException
+from diagnostics import DiagnosticsUpdater
+from arduino_driver import CommandErrorCode, CommandException
 from controllers import *
 
 from math import radians, degrees, copysign

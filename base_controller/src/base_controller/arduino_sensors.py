@@ -22,8 +22,8 @@
 import rospy
 from sensor_msgs.msg import Range, Imu, MagneticField
 from geometry_msgs.msg import Twist, Quaternion, Vector3
-from base_controller.arduino_driver import CommandErrorCode, CommandException
-from base_controller.diagnostics import DiagnosticsUpdater
+from arduino_driver import CommandErrorCode, CommandException
+from diagnostics import DiagnosticsUpdater
 from saturnbot_msgs.msg import *
 from saturnbot_msgs.srv import *
 from math import pow, radians
