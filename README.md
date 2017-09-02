@@ -1,69 +1,11 @@
-**UNSTABLE BRANCH**
+# Overview
 
-This branch is under active development and is not likely to work.  Please use the official hydro-devel or indigo-devel branch for ROS Hydro or ROS Indigo, respectively.
+This ROS metapackage is for controlling Saturnbot. It includes an Arduino library (called ROSArduinoBridge) and a collection of ROS packages for controlling an Arduino-based robot using standard ROS messages and services.  The stack does **not** depend on ROS Serial. The stack includes a base controller for a differential drive robot that accepts ROS Twist messages and publishes odometry data back to the PC. The base controller requires the use of a motor controller and encoders for reading odometry data.
 
-Table of Contents
-=================
+**Note**:It is intended for ROS Indigo and above, and uses the Catkin buildsystem. It may also be compatible with ROS Hydro.
 
-* [Overview](#overview)
-* [Official ROS Documentation](#official-ros-documentation)
-* [System Requirements](#system-requirements)
-* [Preparing your Serial Port under Linux](#preparing-your-serial-port-under-linux)
-* [Installation of the ros_arduino_bridge Stack](#installation-of-the-ros_arduino_bridge-stack)
-* [Loading the ROSArduinoBridge Sketch](#loading-the-rosarduinobridge-sketch)
-* [Firmware Commands](#firmware-commands)
-* [Testing your Wiring Connections](#testing-your-wiring-connections)
-* [Configuring the ros_arduino_python Node](#configuring-the-ros_arduino_python-node)
-* [Launching the ros_arduino_python Node](#launching-the-ros_arduino_python-node)
-* [Viewing Sensor Data](#viewing-sensor-data)
-* [Sending Twist Commands and Viewing Odometry Data](#sending-twist-commands-and-viewing-odometry-data)
-* [ROS Services for Sensors and Servos](#ros-services-for-sensors-and-servos)
-* [ROS Joint Topics and Services](#ros-joint-topics-and-services)
-* [Using the on-board wheel encoder counters (Arduino Uno only)](#using-the-on-board-wheel-encoder-counters-arduino-uno-only)
-* [NOTES](#notes)
+# System Requirements
 
-Overview
---------
-This branch (indigo-devel) is intended for ROS Indigo and above, and uses the Catkin buildsystem. It may also be compatible with ROS Hydro.
-
-This ROS metapackage includes an Arduino library (called ROSArduinoBridge) and a collection of ROS packages for controlling an Arduino-based robot using standard ROS messages and services.  The stack does **not** depend on ROS Serial.
-
-Features of the stack include:
-
-* Direct support for Ping sonar and Sharp infrared (GP2D12) sensors
-
-* Can also read data from generic analog and digital sensors
-
-* Can control digital outputs (e.g. turn a switch or LED on and off)
-
-* Support for PWM servos
-
-* Configurable base controller if using the required hardware
-
-The stack includes a base controller for a differential drive
-robot that accepts ROS Twist messages and publishes odometry data back to
-the PC. The base controller requires the use of a motor controller and encoders for reading odometry data.  The current version of the stack provides support for the following base controller hardware:
-
-* Pololu VNH5019 dual motor controller shield (http://www.pololu.com/catalog/product/2502) or Pololu MC33926 dual motor shield (http://www.pololu.com/catalog/product/2503).
-
-* Robogaia Mega Encoder shield
-(http://www.robogaia.com/two-axis-encoder-counter-mega-shield-version-2.html)
-
-* Instead of the Encoder shield, wheel encoders can be [connected directly](#using-the-on-board-wheel-encoder-counters-arduino-uno-only) if using an Arduino Uno
-
-**NOTE:** The Robogaia Mega Encoder shield can only be used with an Arduino Mega. The on-board wheel encoder counters are currently only supported by Arduino Uno.
-
-* The library can be easily extended to include support for other motor controllers and encoder hardware or libraries.
-
-Official ROS Documentation
---------------------------
-A standard ROS-style version of this documentation can be found on the ROS wiki at:
-
-http://www.ros.org/wiki/ros_arduino_bridge
-
-
-System Requirements
--------------------
 **ROS Dependencies**
 
     $ sudo apt-get install ros-indigo-diagnostic-updater ros-indigo-control-msgs ros-indigo-nav-msgs
@@ -80,37 +22,13 @@ or
 
     $ sudo easy_install -U pyserial
 
-**Arduino IDE 1.6.6 or Higher:**
-Note that the preprocessing of conditional #include statements is broken in earlier versions of the Arduino IDE.  To ensure that the ROS Arduino Bridge firmware compiles correctly, be sure to install version 1.6.6 or higher of the Arduino IDE.  You can download the IDE from https://www.arduino.cc/en/Main/Software.
+# Preparing your Serial Port under Linux
 
-**Hardware:**
-The firmware should work with any Arduino-compatible controller for reading sensors and controlling PWM servos.  However, to use the base controller, you will need a supported motor controller and encoder hardware as described above. If you do not have this hardware, you can still try the package for reading sensors and controlling servos.  See the NOTES section at the end of this document for instructions on how to do this.
-
-To use the base controller you must also install the appropriate libraries for your motor controller and encoders.  For the Pololu VNH5019 Dual Motor Shield, the library can be found at:
-
-https://github.com/pololu/Dual-VNH5019-Motor-Shield
-
-For the Pololu MC33926 Dual Motor Shield, the library can be found at:
-
-https://github.com/pololu/dual-mc33926-motor-shield
-
-The Robogaia Mega Encoder library can be found at:
-
-http://www.robogaia.com/uploads/6/8/0/9/6809982/__megaencodercounter-1.3.tar.gz
-
-These libraries should be installed in your standard Arduino
-sketchbook/libraries directory.
-
-Finally, it is assumed you are using version 1.6.6 or greater of the
-Arduino IDE.
-
-Preparing your Serial Port under Linux
---------------------------------------
 Your Arduino will likely connect to your Linux computer as port /dev/ttyACM# or /dev/ttyUSB# where # is a number like 0, 1, 2, etc., depending on how many other devices are connected.  The easiest way to make the determination is to unplug all other USB devices, plug in your Arduino, then run the command:
 
     $ ls /dev/ttyACM*
 
-or 
+or
 
     $ ls /dev/ttyUSB*
 
@@ -136,150 +54,22 @@ When you log back in again, try the command:
 
     $ groups
 
-and you should see a list of groups you belong to including dialout. 
+and you should see a list of groups you belong to including dialout.
 
-Installation of the ros\_arduino\_bridge Stack
-----------------------------------------------
+# Installation of the saturnbot\_controller Stack
 
-    $ cd ~/catkin_workspace/src
-    $ git clone https://github.com/hbrobotics/ros_arduino_bridge.git
-    $ cd ~/catkin_workspace
+
+    $ cd ~/YOUR_CATKIN_WORKSPACE/src
+    $ git clone https://github.com/Saturn-robot/saturnbot_controller.git
+    $ cd ~/YOUR_CATKIN_WORKSPACE
     $ catkin_make
 
-The provided Arduino library is called ROSArduinoBridge and is
-located in the ros\_arduino\_firmware package.  This sketch is
-specific to the hardware requirements above but it can also be used
-with other Arduino-type boards (e.g. Uno) by turning off the base
-controller as described in the NOTES section at the end of this
-document.
-
-To install the ROSArduinoBridge library, follow these steps:
-
-    $ cd SKETCHBOOK_PATH
-
-where SKETCHBOOK_PATH is the path to your Arduino sketchbook directory.
-
-    $ \cp -rp  `rospack find ros_arduino_firmware`/src/libraries/ROSArduinoBridge -T ROSArduinoBridge
-
-This last command copies the ROSArduinoBridge sketch files into your sketchbook folder and overwrites any existing files with the same name.  The next section describes how to configure, compile and upload this sketch.
+After that, you will install it.
 
 
-Loading the ROSArduinoBridge Sketch
------------------------------------
+# Configuring the base\_controller Node
 
-* If you are using the base controller, make sure you have already installed the appropriate motor controller and encoder libraries into your Arduino sketchbook/librariesfolder.
-
-* Launch the Arduino IDE and load the ROSArduinoBridge sketch.
-  You should be able to find it by going to:
-
-    File->Sketchbook->ROSArduinoBridge
-  
-**NOTE:** If you have the required hardware to use the base controller, uncomment the line that looks like this:
-
-<pre>
-//#define USE_BASE
-</pre>
-
-so it looks like this:
-
-<pre>
-#define USE_BASE
-</pre>
-
-You will also need to choose one of the supported motor controllers by uncommenting its #define statement and commenting out any others.  By default, the Pololu VNH5019 driver is chosen.
-
-Choose a supported encoder library by by uncommenting its #define statement and commenting out any others.  At the moment, the two options are the Robogaia Mega Encoder shield (chosen by default) and the directo connection ARDUINO_ENC_COUNTER option that works for Arduino Uno compatible boards.
-
-By default, the sketch will provide support to control PWM servos attached to your Arduino.  If you do not need servo support, you can comment out the line that looks like this:
-
-<pre>
-#define USE_SERVOS2
-</pre>
-
-so that it looks like this:
-
-<pre>
-//#define USE_SERVOS2
-</pre>
-
-
-* Compile and upload the sketch to your Arduino.
-
-Firmware Commands
------------------
-The ROSArduinoLibrary accepts single-letter commands over the serial port for polling sensors, controlling servos, driving the robot, and reading encoders.  These commands can be sent to the Arduino over any serial interface, including the Serial Monitor in the Arduino IDE.
-
-**NOTE:** Before trying these commands, set the Serial Monitor baudrate to 57600 and the line terminator to "Carriage return" or "Both NL & CR" using the two pulldown menus on the lower right of the Serial Monitor window.
-
-The list of commands can be found in the file commands.h.  The current list includes:
-
-<pre>
-#define ANALOG_READ    'a'
-#define GET_BAUDRATE   'b'
-#define PIN_MODE       'c'
-#define DIGITAL_READ   'd'
-#define READ_ENCODERS  'e'
-#define CONFIG_SERVO   'j'
-#define MOTOR_SPEEDS   'm'
-#define PING           'p'
-#define RESET_ENCODERS 'r'
-#define SERVO_WRITE    's'
-#define SERVO_READ     't'
-#define UPDATE_PID     'u'
-#define SERVO_DELAY    'v'
-#define DIGITAL_WRITE  'w'
-#define ANALOG_WRITE   'x'
-#define ATTACH_SERVO   'y'
-#define DETACH_SERVO   'z'
-#define LEFT            0
-#define RIGHT           1
-</pre>
-
-For example, to get the analog reading on pin 3, use the command:
-
-a 3
-
-To change the mode of digital pin 3 to OUTPUT, send the command:
-
-c 3 1
-
-To get the current encoder counts:
-
-e
-
-To move the robot forward at 20 encoder ticks per second:
-
-m 20 20
-
-To intialize a PWM servo on pin 3 with speed delay 100ms:
-
-j 3 100
-
-To move the servo on pin 3 to position 120 degrees:
-
-s 3 120
-
-To detach servo on pin 3:
-
-z 3
-
-
-Testing your Wiring Connections
--------------------------------
-On a differential drive robot, the motors are connected to the motor controller terminals with opposite polarities to each other.  Similarly, the A/B leads from the encoders are connected in the reverse sense to each other.  However, you still need to make sure that (a) the wheels move forward when given a positive motor speed and (b) that the encoder counts increase when the wheels move forward.
-
-After **placing your robot on blocks**, you can use the Serial Monitor in the Arduino IDE to test both requirements.  Use the 'm' command to activate the motors, the 'e' command to get the encoder counts, and the 'r' command to reset the encoders to 0.  Remember that at the firmware level, motor speeds are given in encoder ticks per second so that for an encoder resolution of, say 4000 counts per wheel revolution, a command such as 'm 20 20' should move the wheels fairly slowly.  (The wheels will only move for 2 seconds which is the default setting for the AUTO\_STOP\_INTERVAL.)  Also remember that the first argument is the left motor speed and the second argument is the right motor speed.  Similarly, when using the 'e' command, the first number returned is the left encoder count and the second number is the right encoder count.
-
-Finally, you can use the 'r' and 'e' commands to verify the expected encoder counts by rotating the wheels by hand roughly one full turn and checking the reported counts.
-
-
-Configuring the ros\_arduino\_python Node
------------------------------------------
-Now that your Arduino is running the required sketch, you can
-configure the ROS side of things on your PC.  You define your robot's
-dimensions, PID parameters, and sensor configuration by editing the
-YAML file in the directory ros\_arduino\_python/config.  So first move
-into that directory:
+You can define your robot's dimensions, PID parameters, and sensor configuration by editing the YAML file in the directory base\_controller/config.  So first move into that directory:
 
     $ roscd ros_arduino_python/config
 
@@ -388,7 +178,7 @@ _Defining Servo Configurations_
 
 The *joints* parameter defines a dictionary of joint names and servo parameters.  (You can name each joint whatever you like but rememember that joint names will become part of the servo's ROS topic and service names.)
 
-The most important parameter is *pin* which of course must match the pin the servo attaches to on your Arduino.  Most PWM servos operate from 0 to 180 degrees with a "neutral" point of 90 degrees. ROS uses radians instead of degrees for joint positions but it is usually easier for programmers to specify the angular limits in the config file using degrees.  The ROS Arduino Bridge pacakge takes care of the conversion to radians.  An *init_position* of 0 therefore means 0 degrees relative to the neutral point of 90 degrees.  A *max_angle* of 90 degrees maps into 180 degrees at the servo. 
+The most important parameter is *pin* which of course must match the pin the servo attaches to on your Arduino.  Most PWM servos operate from 0 to 180 degrees with a "neutral" point of 90 degrees. ROS uses radians instead of degrees for joint positions but it is usually easier for programmers to specify the angular limits in the config file using degrees.  The ROS Arduino Bridge pacakge takes care of the conversion to radians.  An *init_position* of 0 therefore means 0 degrees relative to the neutral point of 90 degrees.  A *max_angle* of 90 degrees maps into 180 degrees at the servo.
 
 _Setting Drivetrain and PID Parameters_
 
@@ -405,14 +195,14 @@ The PID parameters are trickier to set.  You can start with the sample
 values but be sure to place your robot on blocks before sending it
 your first Twist command.
 
-Launching the ros\_arduino\_python Node
----------------------------------------
+# Launching the base\_controller Node
+
 Take a look at the launch file arduino.launch in the
-ros\_arduino\_python/launch directory.  As you can see, it points to a
+base\_controller/launch directory.  As you can see, it points to a
 config file called my\_arduino\_params.yaml.  If you named your config
 file something different, change the name in the launch file.
 
-With your Arduino connected and running the MegaRobogaiaPololu sketch,
+With your Arduino connected and running the saturnbot firmware,
 launch the ros\_arduino\_python node with your parameters:
 
     $ roslaunch ros_arduino_python arduino.launch
@@ -434,8 +224,8 @@ If you have any Ping sonar sensors on your robot and you defined them
 in your config file, they should start flashing to indicate you have
 made the connection.
 
-Viewing Sensor Data
--------------------
+# Viewing Sensor Data
+
 To see the aggregated sensor data, echo the sensor state topic:
 
     $ rostopic echo /arduino/sensor_state
@@ -479,8 +269,8 @@ or
 
    $ rxplot -p 60 /odom/pose/pose/position/x:y, /odom/twist/twist/linear/x, /odom/twist/twist/angular/z
 
-ROS Services for Sensors and Servos
------------------------------------
+# ROS Services for Sensors and Servos
+
 The ros\_arduino\_python package also defines a few ROS services for sensors and servos as follows:
 
 **digital\_set\_direction** - set the direction of a digital pin
@@ -507,8 +297,8 @@ where id is the index of the servo as defined in the Arduino sketch (servos.h) a
 
 where id is the index of the servo as defined in the Arduino sketch (servos.h)
 
-ROS Joint Topics and Services
------------------------------
+# ROS Joint Topics and Services
+
 At the ROS level, a servo is called a joint and each joint has its own topics and services.  To change the position of a joint, publish the position
 in radians to the topic:
 
@@ -539,63 +329,3 @@ A number of services are also available for each joint:
 **/\<joint_name\>/set_speed** - Set the movement speed of servo in radians per second.
 
     $ rosservice call /head_pan_joint/set_speed 1.0
-
-
-Using the on-board wheel encoder counters (Arduino Uno only)
-------------------------------------------------------------
-The firmware supports on-board wheel encoder counters for Arduino Uno.
-This allows connecting wheel encoders directly to the Arduino board, without the need for any additional wheel encoder counter equipment (such as a RoboGaia encoder shield).
-
-For speed, the code is directly addressing specific Atmega328p ports and interrupts, making this implementation Atmega328p (Arduino Uno) dependent. (It should be easy to adapt for other boards/AVR chips though.)
-
-To use the on-board wheel encoder counters, connect your wheel encoders to Arduino Uno as follows:
-
-    Left wheel encoder A output -- Arduino UNO pin 2
-    Left wheel encoder B output -- Arduino UNO pin 3
-
-    Right wheel encoder A output -- Arduino UNO pin A4
-    Right wheel encoder B output -- Arduino UNO pin A5
-
-Make the following changes in the ROSArduinoBridge sketch to disable the RoboGaia encoder shield, and enable the on-board one:
-
-    /* The RoboGaia encoder shield */
-    //#define ROBOGAIA
-    /* Encoders directly attached to Arduino board */
-    #define ARDUINO_ENC_COUNTER
-
-Compile the changes and upload to your controller.
-
-
-NOTES
------
-If you do not have the hardware required to run the base controller,
-follow the instructions below so that you can still use your
-Arduino-compatible controller to read sensors and control PWM servos.
-
-First, you need to edit the ROSArduinoBridge sketch. At the top of
-the file, comment out the line that looks like this:
-
-<pre>
-#define USE_BASE
-</pre>
-
-so it looks like this:
-
-<pre>
-//#define USE_BASE
-</pre>
-
-(You may find that it is already commented out.)
-
-**NOTE:** If you are using a version of the Arduino IDE earlier than 1.6.6, then you also need to comment out the line that looks like this in the file encoder_driver.ino:
-
-    #include "MegaEncoderCounter.h"
-
-so it looks like this:
-
-    //#include "MegaEncoderCounter.h"
-
-Compile the changes and upload to your controller.
-
-Next, edit your my\_arduino_params.yaml file and make sure the
-use\_base\_controller parameter is set to False.  That's all there is to it.
