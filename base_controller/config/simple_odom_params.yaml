@@ -20,10 +20,10 @@ base_controller_rate: 10
 base_frame: base_footprint
 
 # Are we also using an IMU for heading data
-use_imu_heading: True
+use_imu_heading: False
 
 # Publish the odom->base_link transform?
-publish_odom_base_transform: False
+publish_odom_base_transform: True
 
 # === Robot drivetrain parameters
 wheel_diameter: 0.065
@@ -37,7 +37,7 @@ Kp: 10
 Kd: 12
 Ki: 0
 Ko: 50
-accel_limit: 1.0
+accel_limit: 0.5
 
 # == Odometry calibration correction factors
 odom_linear_scale_correction: 1.0
@@ -60,7 +60,7 @@ sensors: {
   #ir_front_center:      {pin: 2, type: GP2D12, rate: 10},
   #sonar_front_center:   {pin: 5, type: Ping, rate: 10},
   #onboard_led:           {pin: 13, type: Digital, rate: 5, direction: output},
-  GY85:                  {pin: 21, type: IMU, rate: 5}
+  #GY85:                  {pin: 21, type: IMU, rate: 5}
 }
 
 # Joint name and configuration is an example only
