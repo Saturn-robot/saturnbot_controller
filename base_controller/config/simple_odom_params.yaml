@@ -41,7 +41,7 @@ accel_limit: 0.5
 
 # == Odometry calibration correction factors
 odom_linear_scale_correction: 1.0
-odom_angular_scale_correction: 1.0
+odom_angular_scale_correction: 1.33
 
 # === Sensor definitions.  Examples only - edit for your robot.
 #     Sensor type can be one of the following:
