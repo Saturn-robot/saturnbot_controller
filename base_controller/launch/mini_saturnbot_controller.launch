@@ -1,3 +1,4 @@
+<!-- This launch file is mainly to calibrate the linear and angular of saturnbot -->
 <launch>
    <node name="saturnbot_controller" pkg="base_controller" type="arduino_node.py" output="screen">
       <rosparam file="$(find base_controller)/config/simple_odom_params.yaml" command="load" />

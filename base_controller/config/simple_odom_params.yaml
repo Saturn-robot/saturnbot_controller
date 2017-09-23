@@ -1,3 +1,5 @@
+# This parameter file is to calibrate the saturnbot so you'd better
+# not modify this file.
 # For a direct USB cable connection, the port name is typically
 # /dev/ttyACM# where is # is a number such as 0, 1, 2, etc
 # For a wireless connection like XBee, the port is typically
@@ -41,7 +43,7 @@ accel_limit: 0.5
 
 # == Odometry calibration correction factors
 odom_linear_scale_correction: 1.0
-odom_angular_scale_correction: 1.33
+odom_angular_scale_correction: 1.0
 
 # === Sensor definitions.  Examples only - edit for your robot.
 #     Sensor type can be one of the following:
