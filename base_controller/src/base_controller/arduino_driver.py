@@ -202,6 +202,24 @@ class Arduino:
         if self.debug:
             rospy.logwarn(msg)
 
+    def get_pidin(self):
+        values = self.execute_array('g')
+        if len(values) != 2:
+            print "get_pidin count was not 2"
+            raise SerialException
+            return None
+        else:
+            return values
+            
+    def get_pidout(self):
+        values = self.execute_array('f')
+        if len(values) != 2:
+            print "get_pidout count was not 2"
+            raise SerialException
+            return None
+        else:
+            return values
+
     def update_pid(self, Kp, Kd, Ki, Ko):
         ''' Set the PID parameters on the Arduino
         '''

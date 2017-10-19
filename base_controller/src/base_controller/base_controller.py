@@ -106,6 +106,14 @@ class BaseController:
         # Clear any old odometry info
         self.arduino.reset_encoders()
 
+        # for pid tuning
+        self.lEncoderPub = rospy.Publisher('Lencoder', Int32)
+        self.rEncoderPub = rospy.Publisher('Rencoder', Int32)
+        self.lPidoutPub = rospy.Publisher('Lpidout', Int32)
+        self.rPidoutPub = rospy.Publisher('Rpidout', Int32)
+        self.lVelPub = rospy.Publisher('Lvel', Int32)
+        self.rVelPub = rospy.Publisher('Rvel', Int32)
+
         # Set up the odometry broadcaster
         self.odomPub = rospy.Publisher('odom', Odometry, queue_size=5)
         self.odomBroadcaster = TransformBroadcaster()
@@ -142,6 +150,24 @@ class BaseController:
     def poll(self):
         now = rospy.Time.now()
         if now > self.t_next:
+            # Used for pid tuning
+            try:
+                left_pidin, right_pidin = self.arduino.get_pidin()
+            except:
+                rospy.logerr("get_pidin exception count: ")
+                return
+
+            self.lEncoderPub.publish(left_pidin)
+            self.rEncoderPub.publish(right_pidin)
+
+            try:
+                left_pidout, right_pidout = self.arduino.get_pidout()
+            except:
+                rospy.logerr("getpidout exception count: ")
+                return
+            self.lPidoutPub.publish(left_pidout)
+            self.rPidoutPub.publish(right_pidout)
+
             # Read the encoders
             try:
                 self.diagnostics.reads += 1
@@ -282,6 +308,10 @@ class BaseController:
                 self.v_right -= self.max_accel
                 if self.v_right < self.v_des_right:
                     self.v_right = self.v_des_right
+
+            # for pid tuning
+            self.lVelPub.publish(self.v_left)
+            self.rVelPub.publish(self.v_right)
 
             # Set motor speeds in encoder ticks per PID loop
             if not self.stopped:
