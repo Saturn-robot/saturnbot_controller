@@ -23,6 +23,7 @@
 
 import rospy
 import sys, os
+from std_msgs.msg import Int32
 
 from math import sin, cos, pi
 from geometry_msgs.msg import Quaternion, Twist, Pose

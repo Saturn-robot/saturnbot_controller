@@ -209,8 +209,9 @@ class Arduino:
             raise SerialException
             return None
         else:
-            return values
-            
+            values[0], values[1] = int(values[0]), int(values[1])
+            return map(int, values)
+
     def get_pidout(self):
         values = self.execute_array('f')
         if len(values) != 2:
@@ -218,7 +219,8 @@ class Arduino:
             raise SerialException
             return None
         else:
-            return values
+            values[0], values[1] = int(values[0]), int(values[1])
+            return map(int, values)
 
     def update_pid(self, Kp, Kd, Ki, Ko):
         ''' Set the PID parameters on the Arduino
