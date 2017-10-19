@@ -27,7 +27,7 @@ publish_odom_base_transform: True
 
 # === Robot drivetrain parameters
 wheel_diameter: 0.12
-wheel_track: 0.24
+wheel_track: 0.25 # 0.24
 encoder_resolution: 26 # from Pololu for 131:1 motors
 gear_reduction: 30
 motors_reversed: True
@@ -40,8 +40,10 @@ Ko: 50
 accel_limit: 0.5
 
 # == Odometry calibration correction factors
-odom_linear_scale_correction: 1.0
-odom_angular_scale_correction: 1.0
+# Inside: 1.032, 1.23
+# Outside: 1.032, 1.33
+odom_linear_scale_correction: 1.032
+odom_angular_scale_correction: 1.23
 
 # === Sensor definitions.  Examples only - edit for your robot.
 #     Sensor type can be one of the following:
