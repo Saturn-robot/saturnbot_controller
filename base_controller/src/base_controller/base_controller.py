@@ -107,7 +107,7 @@ class BaseController:
         # Clear any old odometry info
         self.arduino.reset_encoders()
 
-        # for pid tuning
+	# set the topics for pid tuning
         self.lEncoderPub = rospy.Publisher('Lencoder', Int32, queue_size=10)
         self.rEncoderPub = rospy.Publisher('Rencoder', Int32, queue_size=10)
         self.lPidoutPub = rospy.Publisher('Lpidout', Int32, queue_size=10)
@@ -157,7 +157,7 @@ class BaseController:
             except:
                 rospy.logerr("get_pidin exception count: ")
                 return
-
+	    # publish pid-in data
             self.lEncoderPub.publish(left_pidin)
             self.rEncoderPub.publish(right_pidin)
 
@@ -166,6 +166,7 @@ class BaseController:
             except:
                 rospy.logerr("getpidout exception count: ")
                 return
+	    # publish pid-out data
             self.lPidoutPub.publish(left_pidout)
             self.rPidoutPub.publish(right_pidout)
 
@@ -310,7 +311,7 @@ class BaseController:
                 if self.v_right < self.v_des_right:
                     self.v_right = self.v_des_right
 
-            # for pid tuning
+            # publish the expected velocity
             self.lVelPub.publish(self.v_left)
             self.rVelPub.publish(self.v_right)
 
