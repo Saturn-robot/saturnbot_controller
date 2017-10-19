@@ -108,12 +108,12 @@ class BaseController:
         self.arduino.reset_encoders()
 
         # for pid tuning
-        self.lEncoderPub = rospy.Publisher('Lencoder', Int32)
-        self.rEncoderPub = rospy.Publisher('Rencoder', Int32)
-        self.lPidoutPub = rospy.Publisher('Lpidout', Int32)
-        self.rPidoutPub = rospy.Publisher('Rpidout', Int32)
-        self.lVelPub = rospy.Publisher('Lvel', Int32)
-        self.rVelPub = rospy.Publisher('Rvel', Int32)
+        self.lEncoderPub = rospy.Publisher('Lencoder', Int32, queue_size=10)
+        self.rEncoderPub = rospy.Publisher('Rencoder', Int32, queue_size=10)
+        self.lPidoutPub = rospy.Publisher('Lpidout', Int32, queue_size=10)
+        self.rPidoutPub = rospy.Publisher('Rpidout', Int32, queue_size=10)
+        self.lVelPub = rospy.Publisher('Lvel', Int32, queue_size=10)
+        self.rVelPub = rospy.Publisher('Rvel', Int32, queue_size=10)
 
         # Set up the odometry broadcaster
         self.odomPub = rospy.Publisher('odom', Odometry, queue_size=5)
