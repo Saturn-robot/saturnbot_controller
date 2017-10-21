@@ -158,8 +158,8 @@ class BaseController:
                 rospy.logerr("get_pidin exception count: ")
                 return
 	    # publish pid-in data
-            self.lEncoderPub.publish(left_pidin)
-            self.rEncoderPub.publish(right_pidin)
+            self.lEncoderPub.publish(-left_pidin)
+            self.rEncoderPub.publish(-right_pidin)
 
             try:
                 left_pidout, right_pidout = self.arduino.get_pidout()
@@ -167,8 +167,8 @@ class BaseController:
                 rospy.logerr("getpidout exception count: ")
                 return
 	    # publish pid-out data
-            self.lPidoutPub.publish(left_pidout)
-            self.rPidoutPub.publish(right_pidout)
+            self.lPidoutPub.publish(-left_pidout)
+            self.rPidoutPub.publish(-right_pidout)
 
             # Read the encoders
             try:
