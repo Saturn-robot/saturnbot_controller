@@ -26,8 +26,10 @@ use_imu_heading: False
 publish_odom_base_transform: True
 
 # === Robot drivetrain parameters
-wheel_diameter: 0.12
-wheel_track: 0.25 # 0.24
+# wheel_diameter: 0.12 # big wheel
+wheel_diameter: 0.065 # small wheel
+# wheel_track: 0.25 # big wheel
+wheel_track: 0.202 # small wheel
 encoder_resolution: 26 # from Pololu for 131:1 motors
 gear_reduction: 30
 motors_reversed: True
